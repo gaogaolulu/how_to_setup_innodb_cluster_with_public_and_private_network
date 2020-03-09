@@ -1,0 +1,17 @@
+
+/****
+ use rpm -qa | grep -i mysql 
+ rpm -qa | grep -i percona
+ 
+ to pre-check already installed mysql packages and uninstall 
+
+e.g. rpm -ev mysql-community-common-8.0.18-1.el7.x86_64 --nodeps
+and also
+rpm -ev Percona-XtraDB-Cluster-client-57-5.7.26-31.37.1.el7.x86_64 --nodeps
+****/
+
+
+
+(--nodeps for ignoring packages that depend on them)
+
+yum install -y mysql-commercial-client-8.0.19-1.1.el7.x86_64.rpm  mysql-commercial-common-8.0.19-1.1.el7.x86_64.rpm mysql-commercial-devel-8.0.19-1.1.el7.x86_64.rpm mysql-commercial-libs-8.0.19-1.1.el7.x86_64.rpm  mysql-commercial-libs-compat-8.0.19-1.1.el7.x86_64.rpm mysql-commercial-server-8.0.19-1.1.el7.x86_64.rpm  mysql-router-commercial-8.0.19-1.1.el7.x86_64.rpm mysql-shell-commercial-8.0.19-1.1.el7.x86_64.rpm
