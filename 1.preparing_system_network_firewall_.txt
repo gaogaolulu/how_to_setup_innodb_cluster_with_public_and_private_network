@@ -1,0 +1,98 @@
+
+#### 0. pre-requirement :
+#### a. mysql user existing 
+#### b. private / public network 
+#### c. root permission or sudo permission
+#### hostname :  fh-mongodbp1 / fh-mongodbp2 / fh-mongodbp3
+ 
+10.220.19.51    fh-mongodbp1.minacs.com
+10.220.19.52    fh-mongodbp2.minacs.com
+10.220.19.53    fh-mongodbp3.minacs.com
+10.220.19.54    fh-mongodbp4.minacs.com
+
+
+
+
+####  2.  
+/sbin/iptables -I INPUT -p tcp --dport 3306 -j ACCEPT 
+
+/sbin/iptables -I INPUT -p tcp --dport 33060 -j ACCEPT 
+/sbin/iptables -I INPUT -p tcp --dport 33061 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 33062 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 33063 -j ACCEPT
+
+/sbin/iptables -I INPUT -p tcp --dport 6446 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 6447  -j ACCEPT 
+/sbin/iptables -I INPUT -p tcp --dport 6448 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 6449 -j ACCEPT 
+ 
+/sbin/iptables -I INPUT -p tcp --dport 64460 -j ACCEPT 
+/sbin/iptables -I INPUT -p tcp --dport 64470 -j ACCEPT 
+/sbin/iptables -I INPUT -p tcp --dport 64480 -j ACCEPT 
+/sbin/iptables -I INPUT -p tcp --dport 64490 -j ACCEPT 
+
+#####or : 
+
+
+firewall-cmd --zone=public --add-port=3306/tcp
+
+firewall-cmd --zone=public --add-port=33060/tcp
+firewall-cmd --zone=public --add-port=33061/tcp
+firewall-cmd --zone=public --add-port=33062/tcp
+firewall-cmd --zone=public --add-port=33063/tcp
+
+firewall-cmd --zone=public --add-port=6446/tcp
+firewall-cmd --zone=public --add-port=6447/tcp
+firewall-cmd --zone=public --add-port=6448/tcp
+firewall-cmd --zone=public --add-port=6449/tcp
+
+firewall-cmd --zone=public --add-port=64460/tcp
+firewall-cmd --zone=public --add-port=64470/tcp
+firewall-cmd --zone=public --add-port=64480/tcp
+firewall-cmd --zone=public --add-port=64490/tcp
+
+
+
+#### 3. vi /etc/security/limits.conf 
+mysql soft nproc 65536
+mysql hard nproc 65536
+mysql soft nofile 65536
+mysql hard nofile 65536
+ 
+
+####  4. vi /etc/selinux/config 
+
+SELINUX=disabled or   permissive
+
+
+getenforce  
+
+systemctl stop firewalld ;systemctl disable firewalld
+
+firewall-cmd --state
+
+##### 5. NOT YET vi  /etc/sysctl.conf
+
+fs.aio-max-nr = 1048576
+fs.file-max = 681574400
+kernel.shmmax = 137438953472
+kernel.shmmni = 4096
+kernel.sem = 250 32000 100 200
+net.ipv4.ip_local_port_range = 9000 65000
+net.core.rmem_default = 262144
+net.core.rmem_max = 4194304
+net.core.wmem_default = 262144
+net.core.wmem_max = 1048586
+  
+
+
+
+##### 6. verify 
+python -V
+Python 2.7.5
+
+        
+
+
+
+
