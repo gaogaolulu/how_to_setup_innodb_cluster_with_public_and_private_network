@@ -231,17 +231,17 @@ service mysqld restart
 mysql -uroot -hlocalhost --socket=/d0100/MYSQL/socket/mysql.sock  -p'gtEGpLe3&ia!'
  
 
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'Minacs@123'; 
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'xxxx'; 
 FLUSH PRIVILEGES;
 
  
 
 SET SQL_LOG_BIN=0;
 
-create user root@'10.220.19.%' IDENTIFIED BY 'Minacs@123';  
+create user root@'10.220.19.%' IDENTIFIED BY 'xxxx';  
 grant all on *.* to root@'10.220.19.%' WITH GRANT OPTION ; 
 
-create user root@'192.168.0.%' IDENTIFIED BY 'Minacs@123';  
+create user root@'192.168.0.%' IDENTIFIED BY 'xxxx';  
 grant all on *.* to root@'192.168.0.%' WITH GRANT OPTION ; 
  
 CREATE USER rpl_user@'%' IDENTIFIED BY 'rpl_user';
@@ -264,7 +264,7 @@ service mysqld restart
 
 su - mysql
  
-mysql -uroot -hlocalhost --socket=/d0100/MYSQL/socket/mysql.sock  -p'Minacs@123'
+mysql -uroot -hlocalhost --socket=/d0100/MYSQL/socket/mysql.sock  -p'xxxx'
  
   
  
