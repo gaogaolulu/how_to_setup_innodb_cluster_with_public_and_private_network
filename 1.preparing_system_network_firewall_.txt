@@ -4,12 +4,7 @@
 #### b. private / public network 
 #### c. root permission or sudo permission
 #### hostname :  fh-mongodbp1 / fh-mongodbp2 / fh-mongodbp3
- 
-10.220.19.51    fh-mongodbp1.minacs.com
-10.220.19.52    fh-mongodbp2.minacs.com
-10.220.19.53    fh-mongodbp3.minacs.com
-10.220.19.54    fh-mongodbp4.minacs.com
-
+  
 
 
 
