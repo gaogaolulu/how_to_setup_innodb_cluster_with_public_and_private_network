@@ -1,0 +1,278 @@
+#### 0.  user: root 
+systemctl enable mysqld.service
+
+vi /usr/lib/systemd/system/mysqld.service
+
+LimitNOFILE=65535
+LimitMEMLOCK=65535
+
+systemctl daemon-reload
+ 
+#### 1.user: root 
+#### if mysql user not existing 
+
+useradd mysql
+
+mkdir -p /d0100/MYSQL/
+mkdir -p /d0100/MYSQL/config
+mkdir -p /d0100/MYSQL/data
+mkdir -p /d0100/MYSQL/log
+mkdir -p /d0100/MYSQL/pid
+mkdir -p /d0100/MYSQL/socket
+mkdir -p /d0100/MYSQL/binary_log
+mkdir -p /d0100/MYSQL/relay_log 
+
+
+chown mysql:mysql /d0100/MYSQL/
+chown mysql:mysql /d0100/MYSQL/config
+chown mysql:mysql /d0100/MYSQL/data
+chown mysql:mysql /d0100/MYSQL/log
+chown mysql:mysql /d0100/MYSQL/pid
+chown mysql:mysql /d0100/MYSQL/socket
+chown mysql:mysql /d0100/MYSQL/binary_log
+chown mysql:mysql /d0100/MYSQL/relay_log  
+
+
+chmod 0755 /d0100/MYSQL/config
+chmod 0755 /d0100/MYSQL/data
+chmod 0755 /d0100/MYSQL/pid
+chmod 0755 /d0100/MYSQL/socket
+chmod 0755 /d0100/MYSQL/binary_log
+chmod 0755 /d0100/MYSQL/relay_log
+
+
+mkdir -p /app/mysql 
+ln -s  /usr/bin /app/mysql/ 
+ln -s  /d0100/MYSQL/config /app/mysql/  
+ln -s  /d0100/MYSQL/data /app/mysql/ 
+ln -s  /d0100/MYSQL/log /app/mysql/ 
+ln -s  /d0100/MYSQL/pid /app/mysql/ 
+ln -s  /d0100/MYSQL/socket /app/mysql/ 
+ln -s  /d0100/MYSQL/binary_log /app/mysql/ 
+ln -s  /d0100/MYSQL/relay_log /app/mysql/ 
+
+
+
+chown mysql:mysql    /app/mysql
+chown mysql:mysql -h /app/mysql/data
+chown mysql:mysql -h /app/mysql/bin
+chown mysql:mysql -h /app/mysql/config
+chown mysql:mysql -h /app/mysql/log
+chown mysql:mysql -h /app/mysql/pid
+chown mysql:mysql -h /app/mysql/socket
+chown mysql:mysql -h /app/mysql/binary_log
+chown mysql:mysql -h /app/mysql/relay_log
+ 
+ 
+ 
+####2. node 1 / 2 / 3
+
+vi /etc/my.cnf 
+
+ 
+[mysqldump]
+quick
+max_allowed_packet = 16M
+
+
+[mysqld]
+#### node 1 / 2 / 3
+server_id=1
+ 
+
+#### must set to 0.0.0.0 with ipv6 enabled .
+bind_address=0.0.0.0
+basedir=/usr
+datadir=/d0100/MYSQL/data
+socket=/d0100/MYSQL/socket/mysql.sock
+log-error=/d0100/MYSQL/log/mysqld.log
+pid-file=/d0100/MYSQL/pid/mysqld.pid
+log_bin=/d0100/MYSQL/binary_log/binlog
+relay_log=/d0100/MYSQL/relay_log/relay-bin
+
+default_storage_engine = InnoDB
+ 
+key_buffer_size = 384M
+max_allowed_packet = 64M
+#### will be 4000
+table_open_cache = 943
+read_rnd_buffer_size = 8M
+myisam_sort_buffer_size = 64M
+thread_cache_size = 8
+#### will be 2000 
+max_connections = 1000  
+max_connect_errors = 1000 
+# will increase this value 
+open_files_limit = 65535  
+innodb_open_files = 2048  
+innodb_file_per_table = 1
+general_log_file = /d0100/MYSQL/dbnode01.log
+general_log      = OFF
+
+slow_query_log = OFF
+slow_query_log_file = /d0100/MYSQL/log/dbnode01-slow.log
+ 
+
+sort_buffer_size = 128M   
+join_buffer_size = 128M    
+read_buffer_size = 128M    
+
+#### will set  innodb_buffer_pool_size innodb_log_file_size innodb_flush_method
+#### innodb_dedicated_server=ON will occupied 85% memory , so will set it to OFF 
+innodb_dedicated_server=OFF  
+#### according to server memory 
+ 
+innodb_buffer_pool_size=8G
+innodb_log_file_size=500M
+innodb_flush_method=0 
+innodb_data_file_path = ibdata1:500M;ibdata2:500M:autoextend
+innodb_flush_log_at_trx_commit=1 
+sync_binlog=1 
+innodb_max_undo_log_size=10G
+ 
+innodb_flush_log_at_trx_commit=1 
+sync_binlog=1
+skip_networking=OFF
+
+gtid_mode=ON
+enforce_gtid_consistency=ON
+log_slave_updates=ON
+binlog_format=ROW
+
+default_authentication_plugin="mysql_native_password" 
+binlog_expire_logs_seconds=5184000
+  
+binlog_transaction_dependency_tracking='COMMIT_ORDER'
+slave_parallel_type='LOGICAL_CLOCK' 
+
+binlog_group_commit_sync_delay=10000 
+binlog_group_commit_sync_no_delay_count=32 
+slave_parallel_workers=32 
+slave_preserve_commit_order=ON 
+  
+ 
+master_info_repository=TABLE
+relay_log_info_repository=TABLE
+relay_log_recovery=1
+  
+  
+  
+binlog_checksum=NONE 
+disabled_storage_engines="MyISAM,BLACKHOLE,FEDERATED,ARCHIVE,MEMORY"
+
+
+#### node 1: 
+#### how many servers 
+auto_increment_increment=3  
+auto_increment_offset=1
+
+
+#### node 2:
+#### how many servers 
+####auto_increment_increment=3 
+####auto_increment_offset=2
+
+#### node 3:
+#### how many servers 
+####auto_increment_increment=3 
+####auto_increment_offset=3
+ 
+ 
+ 
+
+ 
+ 
+#### 3. user: mysql   
+#### just for convenience  
+#cp /etc/my.cnf /d0100/MYSQL/config/my.cnf
+#chown mysql:mysql /d0100/MYSQL/config/my.cnf
+ 
+/usr/sbin/mysqld --defaults-file=/etc/my.cnf --initialize --user=mysql
+
+
+ 
+ 
+#### 5. vi /etc/my.cnf , add group replication part 
+
+#### after init , add following part . 
+#### modify  group_replication_local_address  report_host according to each node 
+plugin_load_add='group_replication.so'
+transaction_write_set_extraction=XXHASH64
+group_replication_group_name="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" 
+group_replication_start_on_boot=off
+group_replication_local_address= "192.168.0.2:33061"
+group_replication_group_seeds= "192.168.0.2:33061,192.168.0.3:33061,192.168.0.4:33061"
+group_replication_bootstrap_group=off
+group_replication_ip_whitelist="192.168.0.2,192.168.0.3,192.168.0.4"
+group_replication_single_primary_mode=ON
+report_host="192.168.0.2"
+port=3306
+ 
+####retry to join cluster
+group_replication_autorejoin_tries=10
+group_replication_transaction_size_limit=2147483647 
+####  
+group_replication_consistency=BEFORE 
+
+ 
+
+ 
+####4. user: root 
+
+cat /d0100/MYSQL/log/mysqld.log | grep temporary
+ 
+#### must do this !!!! 
+service mysqld restart 
+ 
+
+#### 4.  user: mysql , node 1 / 2 / 3 
+#### using private network for group_replications 
+
+mysql -uroot -hlocalhost --socket=/d0100/MYSQL/socket/mysql.sock  -p'gtEGpLe3&ia!'
+ 
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Minacs@123'; 
+FLUSH PRIVILEGES;
+
+ 
+
+SET SQL_LOG_BIN=0;
+
+create user root@'10.220.19.%' IDENTIFIED BY 'Minacs@123';  
+grant all on *.* to root@'10.220.19.%' WITH GRANT OPTION ; 
+
+create user root@'192.168.0.%' IDENTIFIED BY 'Minacs@123';  
+grant all on *.* to root@'192.168.0.%' WITH GRANT OPTION ; 
+ 
+CREATE USER rpl_user@'%' IDENTIFIED BY 'rpl_user';
+GRANT REPLICATION SLAVE ON *.* TO rpl_user@'%';
+GRANT BACKUP_ADMIN ON *.* TO rpl_user@'%';
+FLUSH PRIVILEGES;
+SET SQL_LOG_BIN=1;
+
+
+reset master ;
+reset slave ;
+ 
+use  mysql ; 
+truncate table  gtid_executed ; 
+ 
+service mysqld restart 
+ 
+
+#### user : mysql 
+
+su - mysql
+ 
+mysql -uroot -hlocalhost --socket=/d0100/MYSQL/socket/mysql.sock  -p'Minacs@123'
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
