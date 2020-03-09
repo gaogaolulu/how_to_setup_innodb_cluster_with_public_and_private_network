@@ -1,0 +1,114 @@
+
+ 
+#### node 1  / 2 / 3 
+#### application servers : 
+#### user:  root 
+systemctl enable mysqlrouter.service;
+systemctl stop mysqlrouter.service;
+ 
+
+
+#### node 1 / 2 /  3 /  4  ,  
+#### user:  mysql 
+cd /app/
+
+sudo mkdir -p /app/myrouter
+sudo chown -R mysql:mysql /app/myrouter
+
+
+node 1 / 2 / 3
+#### 10.220.19.51 is primary node now 
+
+cd /app/
+mysqlrouter --bootstrap root@10.220.19.51:3306 -d myrouter --force
+
+
+
+
+#### user:  root 
+ 
+vi  /usr/lib/systemd/system/mysqlrouter.service 
+    
+	
+	
+[Unit]
+Description=MySQL Router
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=mysql
+Group=mysql
+
+#PIDFile=/app/myrouter/mysqlrouter.pid
+
+ExecStart=/usr/bin/mysqlrouter -c /app/myrouter/mysqlrouter.conf
+
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+ 
+ 
+systemctl daemon-reload
+systemctl restart mysqlrouter
+
+
+
+
+#### user:  mysql 
+
+mysql -uroot -h10.220.19.51 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p 
+mysql -uroot -h10.220.19.52 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p 
+mysql -uroot -h10.220.19.53 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p
+    
+
+
+
+
+
+ 
+
+#### node 4 :  
+
+#### user:  mysql 
+cd /app/
+
+sudo mkdir -p /app/myrouter
+sudo chown -R mysql:mysql /app/myrouter
+
+ mysqlrouter --bootstrap root@fh-mongodbp1:3306 -d myrouter --force
+
+
+
+vi  /usr/lib/systemd/system/mysqlrouter.service 
+
+[Unit]
+Description=MySQL Router
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=mysql
+Group=mysql
+
+#PIDFile=/app/myrouter/mysqlrouter.pid
+
+ExecStart=/usr/bin/mysqlrouter -c /app/myrouter/mysqlrouter.conf
+
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+ 
+ 
+systemctl daemon-reload
+systemctl restart mysqlrouter
+
+
+mysql -uroot -h10.220.19.54  -P 6446 -p
+ 
+
+ 
