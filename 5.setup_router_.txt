@@ -17,10 +17,10 @@ sudo chown -R mysql:mysql /app/myrouter
 
 
 node 1 / 2 / 3
-#### 10.220.19.51 is primary node now 
+#### xxxx.51 is primary node now 
 
 cd /app/
-mysqlrouter --bootstrap root@10.220.19.51:3306 -d myrouter --force
+mysqlrouter --bootstrap root@xxxx.51:3306 -d myrouter --force
 
 
 
@@ -59,9 +59,9 @@ systemctl restart mysqlrouter
 
 #### user:  mysql 
 
-mysql -uroot -h10.220.19.51 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p 
-mysql -uroot -h10.220.19.52 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p 
-mysql -uroot -h10.220.19.53 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p
+mysql -uroot -hxxxx.51 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p 
+mysql -uroot -hxxxx.52 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p 
+mysql -uroot -hxxxx.53 --socket=/d0100/MYSQL/socket/mysql.sock -P 6446 -p
     
 
 
@@ -108,7 +108,7 @@ systemctl daemon-reload
 systemctl restart mysqlrouter
 
 
-mysql -uroot -h10.220.19.54  -P 6446 -p
+mysql -uroot -hxxxx.54  -P 6446 -p
  
 
  
