@@ -4,7 +4,23 @@
 #### b. private / public network 
 #### c. root permission or sudo permission
 #### hostname :  fh-mongodbp1 / fh-mongodbp2 / fh-mongodbp3
-  
+
+vi /etc/hosts
+
+#### innodb cluster nodes public ip 
+#### xxxx.51   
+#### xxxx.52 
+#### xxxx.53 
+
+####  innodb cluster nodes private  ip 
+#### xxxx.2
+#### xxxx.3
+#### xxxx.4
+
+
+
+####  application server 
+xxxx.54
 
 
 
