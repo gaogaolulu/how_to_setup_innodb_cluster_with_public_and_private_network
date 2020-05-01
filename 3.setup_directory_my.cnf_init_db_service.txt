@@ -205,7 +205,9 @@ group_replication_group_seeds= "192.168.0.2:33061,192.168.0.3:33061,192.168.0.4:
 group_replication_bootstrap_group=off
 group_replication_ip_whitelist="192.168.0.2,192.168.0.3,192.168.0.4"
 group_replication_single_primary_mode=ON
-report_host="192.168.0.2"
+report_host="xxx.51"
+####report_host="xxx.52"
+####report_host="xxx.53"
 port=3306
  
 ####retry to join cluster
